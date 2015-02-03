@@ -1,15 +1,29 @@
 # Reproducible Research: Peer Assessment 1
 
+Updates as of 18:17, Tue, Feb 03 (2015):
+
+(1) Fixed a few typos and minor grammar mistakes.
+
+(2) Rename the data.frame object ave3 as aves to distinguish from 
+the two numeric vectors ave & ave2.
 
 ## Loading and preprocessing the data
-- Load the data. Unzip activity.zip file if activity.csv does not exist.
+- Load the data. You can download repdata-data-activity.zip from the link 
+[here](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip).
 
 ```r
+link <- "http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+zip <- "repdata-data-activity.zip"
 if (!file.exists("activity.csv")) {
-        unzip("activity.zip")
+        if (!file.exists(zip)) {
+                download.file(url = link, destfile = zip)
+                unzip(zip)
+        } else {
+                unzip(zip)
+        }
 }
 ```
-- Process the data into a data frame.
+- Load the data and process the data into a data frame.
 
 ```r
 cols <- c("numeric", "POSIXct", "numeric")
@@ -162,7 +176,7 @@ print(ave2)
 ```
 The new mean of the total steps is 10766.19.
 
-- Calculate and report the median of "the total steps taken per day".
+- Calculate and report the new median of "the total steps taken per day".
 
 ```r
 med2 <- median(sums2$steps)
@@ -191,12 +205,12 @@ the median of total steps taken per day, though the difference between the
 original median and the new median is small. In a much larger dataset, the 
 presence of missing data could contribute to a conclusion that is more deviated 
 from the reality, thus leading to mistakes in making decisions based on the 
-dataset. By filling in these missing values with possible data would give us a 
+dataset. Filling in these missing values with possible data would give us a 
 more complete picture of the real situations.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-- Create a new factor variable in the dataset with two levels (“weekday” and 
-“weekend”) indicating whether a given date is a weekday or weekend day.
+- Create a new factor variable in the dataset with two levels (weekday & 
+weekend) indicating whether a given date is a weekday or weekend day.
 
 ```r
 wkd <- weekdays(dat2$date)
@@ -233,9 +247,9 @@ dat3 <- rbind(wkdy, wknd)
 or weekend days (y-axis).
 
 ```r
-ave3 <- aggregate(steps ~ interval + wkd, data = dat3, mean)
+aves <- aggregate(steps ~ interval + wkd, data = dat3, mean)
 library(lattice)
-xyplot(steps ~ interval | wkd, data = ave3, type = "l", layout = c(1, 2), 
+xyplot(steps ~ interval | wkd, data = aves, type = "l", layout = c(1, 2), 
        xlab = "Interval", ylab = "Number of Steps", 
        main = "Time Series Plot of the Activity Patterns", 
        scales = list(x = list(at = ticklocs, labels = ticknames)))
